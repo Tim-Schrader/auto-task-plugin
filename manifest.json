@@ -1,0 +1,11 @@
+{
+	"id": "auto-task",
+	"name": "Auto Task",
+	"version": "0.0.1",
+	"minAppVersion": "0.15.0",
+	"description": "The Auto Task plugin creates a task plan using selected tasks.",
+	"author": "Tim Schrader",
+	"authorUrl": "",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}
