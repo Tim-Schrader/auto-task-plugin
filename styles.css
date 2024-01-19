@@ -6,3 +6,52 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.task__selection__modal {
+    padding-inline: 1rem;
+    text-align: center;
+
+    & h1 {
+        order: -2;
+    }
+
+    & h2 {
+        order: -1;
+    }
+}
+
+.task__manager__modal {
+    & .container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        & .category__container{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            & .category {
+                padding-right: 3rem;
+            }
+
+            & .param__container {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+
+                & .param {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    padding-inline: 1rem;
+                }
+            }
+        }
+    }
+}
+
+.test {
+    background-color: red;
+}

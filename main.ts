@@ -1,25 +1,27 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { TaskSelectionModal } from 'modal';
 
 // Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
+interface AutoTaskPluginSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
+const DEFAULT_SETTINGS: AutoTaskPluginSettings = {
 	mySetting: 'default'
 }
 
 export default class AutoTaskPlugin extends Plugin {
-	settings: MyPluginSettings;
+	settings: AutoTaskPluginSettings;
 
 	async onload() {
 		await this.loadSettings();
 
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
+		const ribbonIconEl = this.addRibbonIcon('clipboard-list', 'Taskmanager', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+			new Notice('Reloading Taks!');
+			var test = new TaskSelectionModal(this.app).open();			
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
@@ -108,9 +110,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: AutoTaskPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: AutoTaskPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
