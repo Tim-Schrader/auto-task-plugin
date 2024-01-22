@@ -74,21 +74,34 @@ If your plugin does not need CSS, delete this file.
 
 .task-time-card {
     position: relative;
-    height: auto;
-    margin-inline: 1.5rem;
+    height: var(--input-height);
+    margin-left: 1.5rem;
     display: flex;
     flex-direction: row;
     justify-items: center;
 
     & .edit-button {
-        padding-right: 3rem;
-        height: 100% !important;
+        padding-right: 2em;
+        background: var(--interactive-normal);
+        font-size: 1em;
+    }
+
+    & .edit-button:hover {
+        background: var(--interactive-hover);
     }
 
     & .delete-button {
         position: absolute;
-        right: -0.25rem;
-        top: 50%;
-        transform: translateY(-50%);
+        right: 0;
+        top: 0;
+        height: 1.5em;
+        width: 1.5em;
+        padding: 0;
+        box-shadow: none;
+        background: none;
     }
+    & .delete-button:hover {
+        background: var(--interactive-hover);
+    }
+
 }
