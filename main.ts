@@ -1,4 +1,6 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { addToProperty } from 'property/addToProperty';
+import { setProperty } from 'property/setProperty';
 import { TaskSelectionModal } from 'TaskSelectionModal';
 import { WarningModal } from 'WarningModal';
 
@@ -23,6 +25,7 @@ export default class AutoTaskPlugin extends Plugin {
 			// Called when the user clicks the icon.
 			var test = new TaskSelectionModal(this.app).open();			
 		});
+
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
 

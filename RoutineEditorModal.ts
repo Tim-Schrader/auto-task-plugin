@@ -1,11 +1,12 @@
-import { WarningModal } from "WarningModal";
-import { Modal, TFile, App, Setting, setIcon } from "obsidian";
+import { WarningModal } from 'WarningModal';
+import { Modal, TFile, App, Setting, setIcon, ToggleComponent, Vault } from 'obsidian';
 
 export class RoutineEditorModal extends Modal {
     category: string;
     categoryContainer: HTMLElement;
     item: TFile;
 
+    assignedDynamically: boolean;
     date: string;
     time: string;
     priority: string;
@@ -17,85 +18,110 @@ export class RoutineEditorModal extends Modal {
         this.category = category;
         this.categoryContainer = categoryContainer;
         this.item = item;
+
     }
 
     onOpen(): void {
 
-        this.contentEl.classList.add("routine-editor-modal")
+        this.contentEl.classList.add('routine-editor-modal')
 
         switch (this.category) {
-            case "One-time":
-                this.contentEl.createEl("h1", { text: "Add One-Time task" })
+            case 'One-time':
+                this.contentEl.createEl('h1', { text: 'Add One-Time task' })
 
-                var setting = new Setting(this.contentEl)
-                    .setName("Date:")
-                    .setDesc("The date the task is scheduled. Leave empty to assign dynamically.")
-                    .addText(input => {
-                        input
+                new Setting(this.contentEl)
+                    .setName('Assign dynamically:')
+                    .setDesc('Assign the Task automatically in a time period in which no other task occurs.')
+                    .addToggle(toggle => {
+                        toggle
                             .onChange(value => {
-                                this.date = value
+                                this.assignedDynamically = value
+                                if (value) {
+                                    dateSetting.settingEl.style.display = 'none'
+                                    timeSetting.settingEl.style.display = 'none'
+                                    prioritySetting.settingEl.style.display = 'flex'
+                                    dueSetting.settingEl.style.display = 'flex'
+                                } else {
+                                    dateSetting.settingEl.style.display = 'flex'
+                                    timeSetting.settingEl.style.display = 'flex'
+                                    prioritySetting.settingEl.style.display = 'none'
+                                    dueSetting.settingEl.style.display = 'none'
+                                }
                             })
                     });
-                var input = setting.settingEl.querySelector("input")
-                input?.setAttribute("type", "date")
 
-                setting = new Setting(this.contentEl)
-                    .setName("Time:")
-                    .setDesc("The date the task is scheduled. Leave empty to assign dynamically.")
+                var durationSetting = new Setting(this.contentEl)
+                    .setName('Duration:')
+                    .setDesc('The estimated amount of time the task takes to finish.')
+                    .addText(input => {
+                        input
+                            .setPlaceholder('(hours)h (minutes)min')
+                            .onChange(value => {
+                                this.duration = value
+                            })
+                    });
+
+                var timeSetting = new Setting(this.contentEl)
+                    .setName('Time:')
+                    .setDesc('The time at which the Task begins.')
                     .addText(input => {
                         input
                             .onChange(value => {
                                 this.time = value
                             })
                     });
-                input = setting.settingEl.querySelector("input")
-                input?.setAttribute("type", "time")
+                input = timeSetting.settingEl.querySelector('input')
+                input?.setAttribute('type', 'time')
 
-                new Setting(this.contentEl)
-                    .setName("Priority:")
-                    .setDesc("The priority of the task when assigned dynamically.")
+                var dateSetting = new Setting(this.contentEl)
+                    .setName('Date:')
+                    .setDesc('The date the task is scheduled.')
+                    .addText(input => {
+                        input
+                            .onChange(value => {
+                                this.date = value
+                            })
+                    });
+                var input = dateSetting.settingEl.querySelector('input')
+                input?.setAttribute('type', 'date')
+
+                var prioritySetting = new Setting(this.contentEl)
+                    .setName('Priority:')
+                    .setDesc('The priority of the task when assigned dynamically.')
                     .addDropdown(priorities => {
-                        ["lowest", "low", "normal", "high", "highest", "emergency"].forEach(priority => {
+                        ['lowest', 'low', 'normal', 'high', 'highest', 'emergency'].forEach(priority => {
                             priorities.addOption(priority, priority)
                         })
                         priorities.onChange(value => {
                             this.priority = value
                         })
                     })
+                prioritySetting.settingEl.style.display = 'none'
 
-                setting = new Setting(this.contentEl)
-                    .setName("Due:")
-                    .setDesc("Date on which the task is assigned regardless of priority if it is assigned dynamically.")
+                var dueSetting = new Setting(this.contentEl)
+                    .setName('Due:')
+                    .setDesc('Date on which the task is assigned regardless of priority if it is assigned dynamically.')
                     .addText(input => {
                         input
                             .onChange(value => {
                                 this.due = value
                             })
                     });
-                input = setting.settingEl.querySelector("input")
-                input?.setAttribute("type", "date")
+                dueSetting.settingEl.style.display = 'none'
+                input = dueSetting.settingEl.querySelector('input')
+                input?.setAttribute('type', 'date')
 
-                new Setting(this.contentEl)
-                    .setName("Duration:")
-                    .setDesc("The estimated amount of time the task takes to finish.")
-                    .addText(input => {
-                        input
-                            .setPlaceholder("(hours)h (minutes)min")
-                            .onChange(value => {
-                                this.duration = value
-                            })
-                    });
-
-                new Setting(this.contentEl)
+                var save = new Setting(this.contentEl)
                     .addButton((btn) =>
                         btn
-                            .setButtonText("Save")
+                            .setButtonText('Save')
                             .setCta()
-                            .onClick(() => {
-                                var buttonContainer = this.categoryContainer.createDiv({ cls: "task-time-card" })
-                                buttonContainer.createEl("button", { text: this.date, cls: "edit-button" })
-                                var deleteButton = buttonContainer.createEl("button", { cls: "delete-button" })
-                                setIcon(deleteButton, "x");
+                            .onClick(async () => {
+                                var buttonContainer = this.categoryContainer.createDiv({ cls: 'task-time-card' })
+                                buttonContainer.createEl('button', { text: this.date, cls: 'edit-button' })
+                                var deleteButton = buttonContainer.createEl('button', { cls: 'delete-button' })
+
+                                setIcon(deleteButton, 'x');
                                 deleteButton.onclick = () => {
                                     var onConfirm = () => {
                                         buttonContainer.remove()
@@ -105,7 +131,7 @@ export class RoutineEditorModal extends Modal {
                                 this.close()
                             }));
                 break;
-            case "Repeating":
+            case 'Repeating':
 
                 break
             default:
